@@ -1,0 +1,41 @@
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      InstanceTenancy: "default"
+      Tags: 
+       - 
+         Key: "Name"
+         Value: "MyVPC"
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: MySecurityGroup
+      GroupName: MySecurityGroup
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      Tags: 
+        - Key: Name
+          Value: MySecurityGroup
+      VpcId: !Ref MyVPC
+  MyInstance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: "ami-0064e711cbc7a825e"
+      InstanceType: "t2.micro"
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      SecurityGroupIds:
+        - !Ref MySecurityGroup
+      Tags:
+        - Key: "Name"
+          Value: "MyInstance"
