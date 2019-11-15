@@ -1,13 +1,59 @@
 Resources:
+
   MyVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: "10.0.0.0/16"
       InstanceTenancy: "default"
       Tags: 
-       - 
-         Key: "Name"
-         Value: "MyVPC"
+       - Key: Name
+         Value: MyVPC
+
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "MyInternetGateway"
+
+  MyVpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref MyInternetGateway
+      VpcId: !Ref MyVPC
+
+  MyRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: "MyRouteTable"
+
+  MyRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref MyInternetGateway
+
+  MySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      MapPublicIpOnLaunch: True
+      AvailabilityZone: "ap-northeast-1a"
+      CidrBlock: "10.0.1.0/24" 
+      VpcId: !Ref MyVPC
+      Tags: 
+        - Key: Name
+          Value: MySubnet
+
+  MySubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      SubnetId: !Ref MySubnet
+
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties: 
@@ -18,6 +64,10 @@ Resources:
         FromPort: 80
         ToPort: 80
         CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: tcp
         FromPort: 80
@@ -27,15 +77,65 @@ Resources:
         - Key: Name
           Value: MySecurityGroup
       VpcId: !Ref MyVPC
-  MyInstance:
-    Type: "AWS::EC2::Instance"
+
+  MyRole:
+    Type: AWS::IAM::Role
     Properties:
+      RoleName: MyRoleToInstanceProfile
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action: "sts:AssumeRole"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+      Policies:
+        - PolicyName: MyPolicy
+          PolicyDocument:
+            Statement:
+              - Sid: MyUserStmt
+                Effect: Allow
+                NotAction: "iam:*"
+                Resource: "*"
+
+  MyS3AccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: MyS3AccessPolicy
+      PolicyDocument:
+        Statement:
+          - Sid: MyRoleStmt
+            Effect: Allow
+            Action: "*"
+            Resource: "*"
+      Roles: 
+        - Ref: MyRole
+
+  MyInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles: 
+        - Ref: MyRole
+
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      IamInstanceProfile: !Ref MyInstanceProfile
       ImageId: "ami-0064e711cbc7a825e"
       InstanceType: "t2.micro"
-      SecurityGroups:
-        - !Ref MySecurityGroup
       SecurityGroupIds:
         - !Ref MySecurityGroup
+      SubnetId: !Ref MySubnet    
       Tags:
-        - Key: "Name"
-          Value: "MyInstance"
+        - Key: Name
+          Value: MyInstance
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyInstance
+
+  MyS3:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: thorikoshi

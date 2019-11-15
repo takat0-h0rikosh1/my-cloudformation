@@ -1,0 +1,34 @@
+Resources:
+  MyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: MyRole
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action: "sts:AssumeRole"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+      Policies:
+        - PolicyName: MyPolicy
+          PolicyDocument:
+            Statement:
+              - Sid: MyUserStmt
+                Effect: Allow
+                NotAction: "iam:*"
+                Resource: "*"
+
+  MyS3AccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: MyS3AccessPolicy
+      PolicyDocument:
+        Statement:
+          - Sid: MyRoleStmt
+            Effect: Allow
+            Action: "*"
+            Resource: "*"
+      Roles: 
+        - 
+          Ref: MyRole
