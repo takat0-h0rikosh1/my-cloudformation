@@ -106,3 +106,5 @@ AWS::EC2::SubnetRouteTableAssociation
 `--capabilities CAPABILITY_IAM`
 
 aws-vault exec me -n しないとダメ。
+
+S3, RDS, SES
