@@ -98,14 +98,14 @@ $ aws-vault exec me -n -- \
   --parameters ParameterKey=MyKeyPair,ParameterValue=[すでに存在するKeyPair]
 ```
 
+AWS::IAM::Policy はインラインポリシーを作る。
+
 aws s3 ls が遅い。  
 インターネットには接続できているはずなんだが。  
 curl http://sample.com/ は成功した。
 
 セキュリティグループの Egress の設定を http に絞っていたことが原因。
 aws cli は https で port は 443。
-
-
 
 # note
 
