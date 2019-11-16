@@ -1,0 +1,63 @@
+Resources:
+  MyVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      InstanceTenancy: "default"
+      Tags:
+        - Key: Name
+          Value: MyVpc
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "MyInternetGateway"
+  MyVpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref MyInternetGateway
+      VpcId: !Ref MyVPC
+  MyRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: "MyRouteTable"
+  MyRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref MyInternetGateway
+  MySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      MapPublicIpOnLaunch: True
+      AvailabilityZone: "ap-northeast-1a"
+      CidrBlock: "10.0.1.0/24"
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: MySubnet
+  MySubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      SubnetId: !Ref MySubnet
+
+
+Outputs:
+  MySubnetId:
+    Description: The ID of the subnet.
+    Value:
+      Ref: MySubnet
+    Export:
+      Name: MySubnet:ID
+  VpcId:
+    Description: The ID of the vpc.
+    Value:
+      Ref: MyVpc
+    Export:
+      Name: MyVpc:ID

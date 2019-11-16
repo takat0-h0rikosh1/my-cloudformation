@@ -10,16 +10,23 @@ Resources:
             Principal:
               Service:
                 - "ec2.amazonaws.com"
-  MyS3AccessPolicy:
+  MyFullAccessPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: MyS3AccessPolicy
+      PolicyName: MyFullAccessPolicy
       PolicyDocument:
         Statement:
           - Sid: MyRoleStmt
             Effect: Allow
-            Action: ":*"
+            Action: "*"
             Resource: "*"
       Roles:
-        -
-          Ref: MyRole
+        - Ref: MyRole
+
+Outputs:
+  MyRoleName:
+    Description: The name of My Role
+    Value:
+      Ref: MyRole
+    Export:
+      Name: MyRole:NAME

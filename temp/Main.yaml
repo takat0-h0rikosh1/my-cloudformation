@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: The AWS CloudFormation template for this Serverless application
+Resources:
+  ServerlessDeploymentBucket:
+    Type: 'AWS::S3::Bucket'
+  SampleLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: /aws/lambda/sample-slack-post-function-dev
+  IamRoleLambdaExecution:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: !Join
+            - '-'
+            - - dev
+              - sample-slack-post
+              - lambda
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogStream'
+                Resource:
+                  - !Sub >-
+                    arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/sample-slack-post-function-dev:*
+              - Effect: Allow
+                Action:
+                  - 'logs:PutLogEvents'
+                Resource:
+                  - !Sub >-
+                    arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/sample-slack-post-function-dev:*:*
+              - Effect: Allow
+                Action:
+                  - 'sqs:*'
+                Resource: !ImportValue 'sample-slack-post:dev:SampleQueueArn'
+      Path: /
+      RoleName: !Join
+        - '-'
+        - - sample-slack-post
+          - dev
+          - ap-northeast-1
+          - lambdaRole
+  SampleLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        S3Bucket: !Ref ServerlessDeploymentBucket
+        S3Key: >-
+          serverless/sample-slack-post/dev/1534770245927-2018-08-20T13:04:05.927Z/hello.jar
+      FunctionName: sample-slack-post-function-dev
+      Handler: sample.SampleHandler
+      MemorySize: 256
+      Role: !GetAtt
+        - IamRoleLambdaExecution
+        - Arn
+      Runtime: java8
+      Timeout: 300
+      Environment:
+        Variables:
+          QUEUE_URL: !Ref sampleQueue
+          SLACK_API_TOKEN: slack api token required
+    DependsOn:
+      - SampleLogGroup
+      - IamRoleLambdaExecution
+  SampleLambdaVersionEuysj806Eo9LJtABsKsWA2EJizRd9CpaPc75qsv2M:
+    Type: 'AWS::Lambda::Version'
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref SampleLambdaFunction
+      CodeSha256: JNSBKiGGyLhG8c/YND4ZvP0QhFMF6SO20iO7n6HWL0A=
+  sampleQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: sample-slack-post-dev
+      ReceiveMessageWaitTimeSeconds: 5
+      VisibilityTimeout: 10
+Outputs:
+  ServerlessDeploymentBucketName:
+    Value: !Ref ServerlessDeploymentBucket
+  SampleLambdaFunctionQualifiedArn:
+    Description: Current Lambda function version
+    Value: !Ref SampleLambdaVersionEuysj806Eo9LJtABsKsWA2EJizRd9CpaPc75qsv2M
+  SampleQueueArn:
+    Description: The ARN for the Sample Queue
+    Value: !GetAtt
+      - sampleQueue
+      - Arn
+    Export:
+      Name: 'sample-slack-post:dev:SampleQueueArn'

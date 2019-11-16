@@ -1,0 +1,33 @@
+Resources:
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: MySecurityGroup
+      GroupName: MySecurityGroup
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: MySecurityGroup
+      VpcId:
+        ImportValue: MyVPC:ID
+
+Outputs:
+  MySecurityGroupId:
+    Description: The ID of the security group.
+    Value:
+      Ref: MySecurityGroup
+    Export:
+      Name: MySecurityGroup:ID

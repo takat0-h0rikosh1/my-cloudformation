@@ -130,6 +130,26 @@ https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/template-an
 
 `aws cloudformation validate-template` を使え。
 
+# stack が削除できなかった件
+
+結局、これやってもダメだった。詰んだのであきらめる。
+https://aws.amazon.com/jp/premiumsupport/knowledge-center/cloudformation-stack-export-name-error/
+
+# クロススタックを試してみる
+
+## MyRole 作成
+
+InstanceProfile用にRole作成
+
+```bash
+$ aws-vault exec me -n -- aws cloudformation create-stack \
+  --stack-name my-role \
+  --template-body file://$PWD/Role.yaml \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+## VPN構築
+
 # note
 
 Instance Profile の参考になりそうなテンプレート

@@ -1,0 +1,45 @@
+Parameters:
+  KeyPairParam:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: thorikoshi
+  ImageIdParam:
+    Type: AWS::EC2::Image::Id
+    Default: ami-0064e711cbc7a825e
+  InstanceTypeParam:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+
+Resources:
+  MyProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+        - Ref: MyRole
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      IamInstanceProfile: !Ref MyProfile
+      ImageId:
+        Ref: ImageIdParam
+      InstanceType: InstanceTypeParam
+      SecurityGroupIds:
+        - Ref: MySecurityGroup:ID
+      SubnetId:
+        ImportValue: MySubnet:ID
+      KeyName:
+        Ref: KeyPairParam
+      Tags:
+        - Key: Name
+          Value: MyInstance
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId:
+        Ref: MyInstance
+

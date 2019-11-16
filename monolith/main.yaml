@@ -143,6 +143,10 @@ Resources:
       BucketName: thorikoshi
 
 Parameters:
-  MyKeyPair:
+  KeyPair:
     Type: AWS::EC2::KeyPair::KeyName
     Default: thorikoshi
+  ImageId:
+    Type: AWS::EC2::Image::Id
+    Default: ami-0064e711cbc7a825e
+  InstanceType:
