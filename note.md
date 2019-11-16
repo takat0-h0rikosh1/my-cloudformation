@@ -107,6 +107,29 @@ curl http://sample.com/ は成功した。
 セキュリティグループの Egress の設定を http に絞っていたことが原因。
 aws cli は https で port は 443。
 
+# ベストプラクティス
+
+## クロススタック参照
+
+クロススタック参照を利用して stack 作成時にリソースの export, import できる機能。
+https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/walkthrough-crossstackref.html
+
+## テンプレートの再利用
+
+パラメータやマッピング、条件セクションを利用して stack 作成時にパラメータをカスタマイズできるようにする。
+
+コピペをせず、出来合いに stack を参照できる。
+https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/template-anatomy.html
+
+## テンプレートに認証情報を埋め込まない
+
+認証情報は必ず入力パラメータから受け取るようにする。  
+その際は、必ず NoEcho オプションをつける。
+
+## テンプレート実行前に検証する
+
+`aws cloudformation validate-template` を使え。
+
 # note
 
 Instance Profile の参考になりそうなテンプレート
@@ -132,3 +155,43 @@ AWS::EC2::SubnetRouteTableAssociation
 aws-vault exec me -n しないとダメ。
 
 S3, RDS, SES
+
+p4f-ses:
+https://console.aws.amazon.com/iam/home?region=ap-northeast-1#/users/p4f-ses
+
+creativedb-bot:
+https://console.aws.amazon.com/iam/home?region=ap-northeast-1#/users/creativedb_bot?section=permissions
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "route53:*",
+                "route53domains:*",
+                "cloudfront:ListDistributions",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticbeanstalk:DescribeEnvironments",
+                "s3:ListBucket",
+                "s3:GetBucketLocation",
+                "s3:GetBucketWebsite",
+                "ec2:DescribeVpcs",
+                "ec2:DescribeVpcEndpoints",
+                "ec2:DescribeRegions",
+                "sns:ListTopics",
+                "sns:ListSubscriptionsByTopic",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:GetMetricStatistics"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "apigateway:GET",
+            "Resource": "arn:aws:apigateway:*::/domainnames"
+        }
+    ]
+}
+```

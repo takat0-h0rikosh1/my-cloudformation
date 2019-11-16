@@ -10,15 +10,6 @@ Resources:
             Principal:
               Service:
                 - "ec2.amazonaws.com"
-      Policies:
-        - PolicyName: MyPolicy
-          PolicyDocument:
-            Statement:
-              - Sid: MyUserStmt
-                Effect: Allow
-                NotAction: "iam:*"
-                Resource: "*"
-
   MyS3AccessPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -27,8 +18,8 @@ Resources:
         Statement:
           - Sid: MyRoleStmt
             Effect: Allow
-            Action: "*"
+            Action: ":*"
             Resource: "*"
-      Roles: 
-        - 
+      Roles:
+        -
           Ref: MyRole
