@@ -17,11 +17,11 @@ Resources:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref MyInternetGateway
-      VpcId: !Ref MyVPC
+      VpcId: !Ref MyVpc
   MyRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref MyVpc
       Tags:
         - Key: Name
           Value: "MyRouteTable"
@@ -37,7 +37,7 @@ Resources:
       MapPublicIpOnLaunch: True
       AvailabilityZone: "ap-northeast-1a"
       CidrBlock: "10.0.1.0/24"
-      VpcId: !Ref MyVPC
+      VpcId: !Ref MyVpc
       Tags:
         - Key: Name
           Value: MySubnet

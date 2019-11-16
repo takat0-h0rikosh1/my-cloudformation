@@ -21,8 +21,7 @@ Resources:
       Tags:
         - Key: Name
           Value: MySecurityGroup
-      VpcId:
-        ImportValue: MyVPC:ID
+      VpcId: !ImportValue MyVpc:ID
 
 Outputs:
   MySecurityGroupId:

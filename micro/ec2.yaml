@@ -20,18 +20,18 @@ Resources:
     Properties:
       Path: "/"
       Roles:
-        - Ref: MyRole
+        - !ImportValue MyRole:NAME
   MyInstance:
     Type: AWS::EC2::Instance
     Properties:
       IamInstanceProfile: !Ref MyProfile
       ImageId:
         Ref: ImageIdParam
-      InstanceType: InstanceTypeParam
+      InstanceType:
+        Ref: InstanceTypeParam
       SecurityGroupIds:
-        - Ref: MySecurityGroup:ID
-      SubnetId:
-        ImportValue: MySubnet:ID
+        - !ImportValue MySecurityGroup:ID
+      SubnetId: !ImportValue MySubnet:ID
       KeyName:
         Ref: KeyPairParam
       Tags:
