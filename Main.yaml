@@ -1,13 +1,12 @@
 Resources:
-
   MyVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: "10.0.0.0/16"
       InstanceTenancy: "default"
-      Tags: 
-       - Key: Name
-         Value: MyVPC
+      Tags:
+        - Key: Name
+          Value: MyVPC
 
   MyInternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -42,9 +41,9 @@ Resources:
     Properties:
       MapPublicIpOnLaunch: True
       AvailabilityZone: "ap-northeast-1a"
-      CidrBlock: "10.0.1.0/24" 
+      CidrBlock: "10.0.1.0/24"
       VpcId: !Ref MyVPC
-      Tags: 
+      Tags:
         - Key: Name
           Value: MySubnet
 
@@ -56,24 +55,24 @@ Resources:
 
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
-    Properties: 
+    Properties:
       GroupDescription: MySecurityGroup
       GroupName: MySecurityGroup
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: 22
-        ToPort: 22
-        CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
-      - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        CidrIp: 0.0.0.0/0
-      Tags: 
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
         - Key: Name
           Value: MySecurityGroup
       VpcId: !Ref MyVPC
@@ -108,14 +107,14 @@ Resources:
             Effect: Allow
             Action: "*"
             Resource: "*"
-      Roles: 
+      Roles:
         - Ref: MyRole
 
   MyInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
       Path: "/"
-      Roles: 
+      Roles:
         - Ref: MyRole
 
   MyInstance:
@@ -126,10 +125,13 @@ Resources:
       InstanceType: "t2.micro"
       SecurityGroupIds:
         - !Ref MySecurityGroup
-      SubnetId: !Ref MySubnet    
+      SubnetId: !Ref MySubnet
+      KeyName:
+        Ref: MyKeyPair
       Tags:
         - Key: Name
           Value: MyInstance
+
   MyEIP:
     Type: AWS::EC2::EIP
     Properties:
@@ -139,3 +141,8 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: thorikoshi
+
+Parameters:
+  MyKeyPair:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: thorikoshi

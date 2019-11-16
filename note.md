@@ -81,7 +81,22 @@ ig, vpc-gateway-attachment, route-table, route, subnet-route-table-association �
 subnet は private 用に用意することもあるみたいだ。
 その場合、route は作成しないらしい。
 
+2019/11/16 ---
 
+ssh するには keypair を作って stack の ec2 の KeyName の指定が必要。
+https://docs.aws.amazon.com/cli/latest/reference/ec2/create-key-pair.html
+
+cli でパラメータを指定するとき
+--parameters ParameterKey=MyKeyPair,ParameterValue=my-key-pair
+
+```bash
+$ aws-vault exec me -n -- \ 
+  aws cloudformation update-stack \
+  --stack-name "my-stack" \
+  --template-body file://$PWD/Main.yaml \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameters ParameterKey=MyKeyPair,ParameterValue=[すでに存在するKeyPair]
+```
 
 # note
 
