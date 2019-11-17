@@ -215,3 +215,6 @@ https://console.aws.amazon.com/iam/home?region=ap-northeast-1#/users/creativedb_
     ]
 }
 ```
+
+instance-id の取得エンドポイント
+http://169.254.169.254/latest/meta-data/instance-id

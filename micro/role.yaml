@@ -10,6 +10,9 @@ Resources:
             Principal:
               Service:
                 - "ec2.amazonaws.com"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonRoute53FullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
   MyFullAccessPolicy:
     Type: AWS::IAM::Policy
     Properties:

@@ -47,7 +47,6 @@ Resources:
       RouteTableId: !Ref MyRouteTable
       SubnetId: !Ref MySubnet
 
-
 Outputs:
   MySubnetId:
     Description: The ID of the subnet.
