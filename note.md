@@ -9,7 +9,7 @@ $ aws-vault exec me -- \
 }
 ```
 
-defautl の vpc id の指定がないとダメ？
+default の vpc id の指定がないとダメ？
 No default VPC for this user (Service: AmazonEC2; Status Code: 400; Error Code: VPCIdNotSpecified; Request ID: 1cf5aebd-fa77-4cc6-a8db-5a2308b8774f)
 
 Refの説明
@@ -175,46 +175,6 @@ AWS::EC2::SubnetRouteTableAssociation
 aws-vault exec me -n しないとダメ。
 
 S3, RDS, SES
-
-p4f-ses:
-https://console.aws.amazon.com/iam/home?region=ap-northeast-1#/users/p4f-ses
-
-creativedb-bot:
-https://console.aws.amazon.com/iam/home?region=ap-northeast-1#/users/creativedb_bot?section=permissions
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "route53:*",
-                "route53domains:*",
-                "cloudfront:ListDistributions",
-                "elasticloadbalancing:DescribeLoadBalancers",
-                "elasticbeanstalk:DescribeEnvironments",
-                "s3:ListBucket",
-                "s3:GetBucketLocation",
-                "s3:GetBucketWebsite",
-                "ec2:DescribeVpcs",
-                "ec2:DescribeVpcEndpoints",
-                "ec2:DescribeRegions",
-                "sns:ListTopics",
-                "sns:ListSubscriptionsByTopic",
-                "cloudwatch:DescribeAlarms",
-                "cloudwatch:GetMetricStatistics"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "apigateway:GET",
-            "Resource": "arn:aws:apigateway:*::/domainnames"
-        }
-    ]
-}
-```
 
 instance-id の取得エンドポイント
 http://169.254.169.254/latest/meta-data/instance-id
