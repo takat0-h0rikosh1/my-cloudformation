@@ -118,10 +118,10 @@ Resources:
                 NotAction: "iam:*"
                 Resource: "*"
 
-  MyS3AccessPolicy:
+  MyAccessPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: MyS3AccessPolicy
+      PolicyName: MyAccessPolicy
       PolicyDocument:
         Statement:
           - Sid: MyRoleStmt
@@ -147,7 +147,7 @@ Resources:
       InstanceType:
         Ref: InstanceTypeParam
       SecurityGroupIds:
-        Ref: MySecurityGroup
+        - Ref: MySecurityGroup
       SubnetId: !Ref MySubnet
       KeyName:
         Ref: KeyPairParam
