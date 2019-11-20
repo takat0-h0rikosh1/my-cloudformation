@@ -1,3 +1,5 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
 Parameters:
   KeyPairParam:
     Type: AWS::EC2::KeyPair::KeyName

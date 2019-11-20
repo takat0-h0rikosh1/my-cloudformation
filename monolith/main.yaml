@@ -1,3 +1,24 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  KeyPairParam:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: thorikoshi
+  ImageId:
+    Type: AWS::EC2::Image::Id
+    Default: ami-0064e711cbc7a825e
+  InstanceTypeParam:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+  S3BucketNameParam:
+    Type: String
+    Default: thorikoshi
+
 Resources:
   MyVPC:
     Type: AWS::EC2::VPC
@@ -121,13 +142,15 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       IamInstanceProfile: !Ref MyInstanceProfile
-      ImageId: "ami-0064e711cbc7a825e"
-      InstanceType: "t2.micro"
+      ImageId:
+        Ref: ImageId
+      InstanceType:
+        Ref: InstanceTypeParam
       SecurityGroupIds:
-        - !Ref MySecurityGroup
+        Ref: MySecurityGroup
       SubnetId: !Ref MySubnet
       KeyName:
-        Ref: MyKeyPair
+        Ref: KeyPairParam
       Tags:
         - Key: Name
           Value: MyInstance
@@ -140,13 +163,5 @@ Resources:
   MyS3:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: thorikoshi
-
-Parameters:
-  KeyPair:
-    Type: AWS::EC2::KeyPair::KeyName
-    Default: thorikoshi
-  ImageId:
-    Type: AWS::EC2::Image::Id
-    Default: ami-0064e711cbc7a825e
-  InstanceType:
+      BucketName:
+        Ref: S3BucketNameParam
